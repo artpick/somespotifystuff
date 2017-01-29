@@ -13,10 +13,17 @@ if len(sys.argv) > 3:
 else:
    commit_hash = 'abba'
   
-foundJsonTracks = urllib2.urlopen("https://api.spotify.com/v1/search?q=" + "+".join(commit_hash[0:7]) + "&type=track").read()
-parsedJSON = json.loads(foundJsonTracks)
+found_json_tracks = urllib2.urlopen("https://api.spotify.com/v1/search?q=" + "+".join(commit_hash[0:7]) + "&type=track").read()
+parsed_json = json.loads(found_json_tracks)
+song_name = parsed_json['tracks']['items'][0]['name']
+all_artists_from_first_song = parsed_json['tracks']['items'][0]['album']['artists']
+all_artists_name = map(lambda x: x['name'], all_artists_from_first_song)
+artist_names = reduce(lambda x, y: x + " " + y, all_artists_name)
+
+print artist_names
+
 with open(commit_msg_filepath, 'r+') as f:
 	content = f.read()
 	f.seek(0, 0)
-	f.write("Listen to that song! : %s" % (parsedJSON['tracks']['items'][0]['name']))
+	f.write("Listen to that song! : %s from %s " % (song_name, artist_names))
 
