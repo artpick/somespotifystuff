@@ -16,14 +16,12 @@ else:
 found_json_tracks = urllib2.urlopen("https://api.spotify.com/v1/search?q=" + "+".join(commit_hash[0:7]) + "&type=track").read()
 parsed_json = json.loads(found_json_tracks)
 song_name = parsed_json['tracks']['items'][0]['name']
+song_link = parsed_json['tracks']['items'][0]['external_urls']['spotify']
 all_artists_from_first_song = parsed_json['tracks']['items'][0]['album']['artists']
 all_artists_name = map(lambda x: x['name'], all_artists_from_first_song)
 artist_names = reduce(lambda x, y: x + " " + y, all_artists_name)
-
-print artist_names
-
 with open(commit_msg_filepath, 'r+') as f:
 	content = f.read()
 	f.seek(0, 0)
-	f.write("Listen to that song! : %s from %s " % (song_name, artist_names))
+	f.write("Listen to that song! : %s from %s \n\t Go get it %s" % (song_name, artist_names,song_link))
 
